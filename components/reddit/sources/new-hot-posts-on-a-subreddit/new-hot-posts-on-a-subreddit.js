@@ -13,7 +13,10 @@ module.exports = {
   props: {
     ...common.props,
     subreddit: {
-      propDefinition: [common.props.reddit, "subreddit"],
+      propDefinition: [
+        common.props.reddit,
+        "subreddit",
+      ],
     },
     locale: {
       type: "string",
@@ -28,12 +31,15 @@ module.exports = {
       type: "boolean",
       label: "Show all posts (ignoring filters)?",
       description:
-        'If set to true, posts matching filters such us "hide links that I have voted on" will be included in the emitted event.',
+        "If set to true, posts matching filters such us \"hide links that I have voted on\" will be included in the emitted event.",
       default: false,
       optional: true,
     },
     includeSubredditDetails: {
-      propDefinition: [reddit, "includeSubredditDetails"],
+      propDefinition: [
+        reddit,
+        "includeSubredditDetails",
+      ],
     },
   },
   hooks: {
@@ -44,7 +50,7 @@ module.exports = {
         this.locale,
         this.showAllPosts,
         this.includeSubredditDetails,
-        10
+        10,
       );
       if (!hotPosts) {
         console.log("No data available, skipping emitting sample events");
@@ -67,21 +73,21 @@ module.exports = {
     },
   },
   async run() {
-    console.log("testing out the 500 error");
     const hotPosts = await this.reddit.getNewHotSubredditPosts(
       this.subreddit,
       this.locale,
       this.showAllPosts,
       this.includeSubredditDetails,
-      10
+      10,
     );
     if (!hotPosts) {
       console.log("No data available, skipping itieration");
-    } else {
-      const orderedHotPosts = hotPosts.reverse();
-      orderedHotPosts.forEach((hotPost) => {
-        this.emitRedditEvent(hotPost);
-      });
+      return;
     }
+
+    const orderedHotPosts = hotPosts.reverse();
+    orderedHotPosts.forEach((hotPost) => {
+      this.emitRedditEvent(hotPost);
+    });
   },
 };
