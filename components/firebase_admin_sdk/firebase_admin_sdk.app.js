@@ -28,28 +28,19 @@ module.exports = {
     /**
      * Creates and initializes a Firebase app instance.
      */
-    async initializeApp() {
-      const {
-        projectId,
-        clientEmail,
-        privateKey,
-      } = this.$auth;
-      const formattedPrivateKey = privateKey.replace(/\\n/g, "\n");
-      return await admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId,
-          clientEmail,
-          privateKey: formattedPrivateKey,
-        }),
+    initializeApp() {
+      const { projectId } = this.$auth;
+      return admin.initializeApp({
+        credential: admin.credential.cert(this.$auth),
         databaseURL: `https://${projectId}-default-rtdb.firebaseio.com/`,
       });
     },
     /**
      * Renders this app instance unusable and frees the resources of all associated services.
      */
-    async deleteApp() {
+    deleteApp() {
       const app = admin.app();
-      await app.delete();
+      return app.delete();
     },
     /**
      * Retrieves the default Firebase app instance.
