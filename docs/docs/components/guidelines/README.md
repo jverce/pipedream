@@ -129,24 +129,50 @@ run the following commands at the root of the project:
 
 ### Process
 
-Anyone from the community can build [sources](/event-sources/) and [actions](/components/actions/) for integrated apps (we refer to these collectively as "[components](/components/#what-are-components)").
+Anyone from the community can build [sources](/event-sources/) and
+[actions](/components/actions/) for integrated apps (we refer to these
+collectively as "[components](/components/#what-are-components)").
 
-All development happens in [this GitHub repo](https://github.com/PipedreamHQ/pipedream). Fork the repo and refer to the [contribution docs](/components/guidelines/#prerequisites) to get your development environment setup.
+All development happens in [this GitHub
+repo](https://github.com/PipedreamHQ/pipedream). Fork the repo and refer to the
+[contribution docs](/components/guidelines/#prerequisites) to get your
+development environment setup.
 
 To submit new components:
 
-1. If you don't see the app listed in [our marketplace](https://pipedream.com/apps), you can [request it here](https://github.com/PipedreamHQ/pipedream/issues/new?assignees=&labels=app%2C+enhancement&template=app---service-integration.md&title=%5BAPP%5D).
-2. Once the Pipedream team integrates the app, we'll create a directory for the app in the `components` directory of the GitHub repo. That directory will contain an "[app file](/components/guidelines/#app-files)" that contains the basic code you'll need to get started developing components. App files should contain props, methods, and other code you're using across different components. [See this example for Airtable](https://github.com/PipedreamHQ/pipedream/blob/master/components/airtable/airtable.app.js)).
-3. Refer to the quickstarts for [sources](/components/quickstart/nodejs/sources/) and [actions](/components/quickstart/nodejs/actions/) to learn how to create components.
-4. When you're ready to develop your own components, you can reference the [component API docs](/components/api/) and our [contribution guidelines](/components/guidelines/#guidelines-patterns).
-5. Create a PR for the Pipedream team to review and post a message in our [community forum](https://pipedream.com/community/c/dev/11) or [public Slack](https://pipedream-users.slack.com/archives/C01E5KCTR16).
+1. If you don't see the app listed in [our
+   marketplace](https://pipedream.com/apps), you can [request it
+   here](https://github.com/PipedreamHQ/pipedream/issues/new?assignees=&labels=app%2C+enhancement&template=app---service-integration.md&title=%5BAPP%5D).
+2. Once the Pipedream team integrates the app, we'll create a directory for the
+   app in the `components` directory of the GitHub repo. That directory will
+   contain an "[app file](/components/guidelines/#app-files)" that contains the
+   basic code you'll need to get started developing components. App files should
+   contain props, methods, and other code you're using across different
+   components. [See this example for
+   Airtable](https://github.com/PipedreamHQ/pipedream/blob/master/components/airtable/airtable.app.js)).
+3. Refer to the quickstarts for
+   [sources](/components/quickstart/nodejs/sources/) and
+   [actions](/components/quickstart/nodejs/actions/) to learn how to create
+   components.
+4. When you're ready to develop your own components, you can reference the
+   [component API docs](/components/api/) and our [contribution
+   guidelines](/components/guidelines/#guidelines-patterns).
+5. Create a PR for the Pipedream team to review and post a message in our
+   [community forum](https://pipedream.com/community/c/dev/11) or [public
+   Slack](https://pipedream-users.slack.com/archives/C01E5KCTR16).
 6. Address any feedback provided by Pipedream.
-7. Once the review is complete and approved, Pipedream will merge the PR to the `master` branch! :tada:
+7. Once the review is complete and approved, Pipedream will merge the PR to the
+   `master` branch! :tada:
 
-Have questions? Reach out in the [#contribute channel](https://pipedream-users.slack.com/archives/C01E5KCTR16) in Slack or [on Discourse](https://pipedream.com/community/c/dev/11).
+Have questions? Reach out in the [#contribute
+channel](https://pipedream-users.slack.com/archives/C01E5KCTR16) in Slack or [on
+Discourse](https://pipedream.com/community/c/dev/11).
 
-Looking for ideas? Check out [sources](https://github.com/PipedreamHQ/pipedream/issues?q=is%3Aissue+is%3Aopen+%5BSOURCE%5D+in%3Atitle)
-and [actions](https://github.com/PipedreamHQ/pipedream/issues?q=is%3Aissue+is%3Aopen+%5BACTION%5D+in%3Atitle+) requested by the community!
+Looking for ideas? Check out
+[sources](https://github.com/PipedreamHQ/pipedream/issues?q=is%3Aissue+is%3Aopen+%5BSOURCE%5D+in%3Atitle)
+and
+[actions](https://github.com/PipedreamHQ/pipedream/issues?q=is%3Aissue+is%3Aopen+%5BACTION%5D+in%3Atitle+)
+requested by the community!
 
 ## Reference Components
 
@@ -1650,4 +1676,517 @@ to focus when evaluating if a component makes proper use of an app's API:
 
 #### Robustness
 
+Pipedream users rely on the platform to execute 3rd party integrations, internal
+processes/workflows, data ETL jobs and many other use cases that power their
+businesses (or homes :smile:) daily. The value of Pipedream lies on being the
+"invisible" fabric that sustains and/or glues together the (potentially complex)
+systems that the users develop, maintain and operate. For this reason, it is
+crucial that the components that we develop within Pipedream are robust in the
+following sense of the word:
+
+1. [Spikes in traffic do not prevent a workflow from making progress](#high-loadstraffic)
+2. [Incorrect data formats (e.g. an unexpected date format) are handled gracefully](#data-formats)
+3. Components do not depend on deprecated packages/libraries
+4. Edge cases are covered as much as possible (sometimes the official
+   documentation of an API can be incorrect and/or incomplete and issues can go
+   unnoticed for a while)
+
+##### High Loads/Traffic
+
+The first place to start is the API calls to the app, since these are the most
+variable piece across all components, and they involve new knowledge every time
+a new API call is introduced into the project. Given the variability of all the
+integrated apps in the platform, it is impractical to come up with a
+well-defined checklist of things to consider, but the [Good API
+Usage](#good-api-usage) section outlines the general principles when evaluating
+API calls against an app.
+
+However, even if the API's are used correctly the component might still
+encounter issues due to high traffic, missing or inconsistent data, insufficient
+permissions, etc. As mentioned before, Pipedream components must be able to
+handle with all these potential edge cases in a way that does not disrupts its
+users.
+
+::: danger BAD
+This following example will potentially break after the component's been used
+for a while
+:::
+
+```js
+const base = require("../base");
+
+module.exports = {
+  ...base,
+  key: "cloud_storage-file-updated",
+  version: "0.0.1",
+  name: "File Updated",
+  description: "Emits an event when an existing file is updated",
+  props: {
+    ...base.props,
+    timer: {
+      type: "$.interface.timer",
+      label: "Polling Frequency",
+      description: "The frequency at which the component poll the app",
+      default: {
+        intervalSeconds: 60 * 15, // 15 minutes
+      },
+    },
+  },
+  methods: {
+    ...base.methods,
+    async run(event) {
+      const { timestamp } = event;
+      const listFilesStream = this.cloud_storage.listFiles();
+      for await (const file of listFilesStream) {
+        if (!this.isFileNew(file, timestamp)) {
+          continue;
+        }
+
+        this.processEvent(file);
+      }
+    },
+  },
+};
+```
+
+The above component seems fine at first glance. The `listFiles` method is
+actually an `async` generator that likely paginates through the list of files
+belonging to the underlying account. The logic also performs some filtering so
+that the result does not contain duplicates.
+
+However, this component will always scan the entire list of files in the user's
+account, which is likely to grow through time. As the user adds more and more
+files, scanning the list of files will take longer and longer. Eventually, the
+user will find itself in a situation where the component execution time exceeds
+the maximum amount of time without the ability to recover, and it will no longer
+work as expected.
+
+So when reviewing a component, make sure that the logic can handle huge amounts
+of data without unexpected issues. Keep in mind that a component could still
+potentially be "killed" due to a timeout, but the important thing here is to
+ensure that the timeout doesn't cause events to be missed/dropped, and that new
+events are eventually processed by the component in some near future.
+
+Finally, keep in mind that API's impose limits on the amount of requests and
+traffic that a user can demand from the API within a certain period of time. It
+is important to ensure that API calls handle these and other HTTP responses
+using the correct mechanisms, like retries with an exponential back-off time:
+
+```js
+const axios = require("axios");
+const retry = require("async-retry");
+
+module.exports = {
+  type: "app",
+  app: "cloud_storage",
+  methods: {
+    apiCall() {
+      const url = "https://cloud-storage.com/api/some-api-call";
+      return axios.get(url);
+    },
+    fetchObjects() {
+      const retryOpts = {
+        retries: 5,
+        factor: 2,
+        minTimeout: 2000, // In milliseconds
+      };
+      return retry(async (bail) => {
+        try {
+          return await this.apiCall();
+        } catch (err) {
+          const { status } = err.response;
+          const isRetriable = [
+            429,
+            500,
+            502,
+          ].includes(status);
+          if (!isRetriable) {
+            console.error(`Aborting request: ${err}`);
+            bail(err);
+          }
+
+          throw err;
+        }
+      }, retryOpts);
+    },
+  },
+};
+```
+
+The [`async-retry`](https://www.npmjs.com/package/async-retry) is a package
+that's been successfully used by multiple components to abstract the retry
+mechanism without compromising code readability and flexibility.
+
+##### Data Formats
+
+Another source of trouble is usually the data formats of the involved API's,
+such as:
+
+- Incorrect date format
+- Missing field from the API payload
+- Different payloads based on the parameters passed to an API
+
+For example, some apps that support webhooks use different data formats
+depending on the event that triggered the webhook. It can be hard and very time
+consuming trying to predict every possible combination, and even harder to
+review that the code supports every one of them. An alternative to this is to
+have the component rely on those invariants that the API guarantees to provide.
+
+For example, if every API payload contains an `id` field that uniquely
+identifies an object then it's safe to use it, but if only some payloads contain
+the field `name` then the component should not rely on its presence. However,
+sometimes an API can provide metadata about the data formats themselves that
+could be useful to dynamically determine how to process a payload at runtime:
+
+```js{13-18,21}
+const startCase = require("lodash/startCase");
+const base = require("../base");
+
+module.exports = {
+  ...base,
+  key: "cloud_storage-new-object-instant",
+  version: "0.0.1",
+  name: "New Object (Instant)",
+  description: "Emits an event when an arbitrary object is created",
+  methods: {
+    ...base.methods,
+    generateMeta(item) {
+      const nameField = this.db.get("nameField");
+      const {
+        CreatedDate: createdDate,
+        Id: id,
+        [nameField]: name,
+      } = item;
+      const entityType = startCase(this.objectType);
+      const summary = `New ${entityType} created: ${name}`;
+      const ts = Date.parse(createdDate);
+      return {
+        id,
+        summary,
+        ts,
+      };
+    },
+  },
+};
+```
+
+In this case, the component is dynamically fetching a field from the event
+payload based on the metadata that the component fetched from the API (assume
+that the `base` component did this during the component activation), and since
+the `CreatedDate` and `Id` are always guaranteed to be present then the
+component can safely retrieve them without issues.
+
+Also note that the `CreatedDate` value is parsed using `Date.parse`. This is
+usually the case with most API's (most API's provide dates in [ISO
+8601](https://en.wikipedia.org/wiki/ISO_8601) format) but this is also a source
+of potential bugs at runtime: the component must properly handle the types of
+each field to avoid any exceptions that could abort the component's execution.
+
+Finally, when a field is not guaranteed to be present but the component logic
+relies on it, it makes sense to ensure that at least a sensible default value is
+used in those cases, for example:
+
+```js
+const {
+  UpdatedDate: updatedDate = new Date().toISOString(),
+  Id: id,
+} = item;
+const ts = Date.parse(updatedDate);
+```
+
+In the example above, the `Id` field is always guaranteed to be present and so
+we can safely retrieve it from the `item` object. However, the `UpdatedDate`
+field could be absent in some cases. Since the component needs a proper
+timestamp related to the event it makes sense to default this value to the
+current timestamp should the `UpdatedDate` be absent. Keep in mind that the type
+and format of the default value should match the expected type and format of the
+missing attribute (it's not strictly needed but it usually simplifies the code).
+
+##### Deprecated Dependencies
+
+Pipedream allows components to use NPM packages simply by adding `require`
+clauses in the code. The platform takes care of retrieving those dependencies
+and bundling them together into the final executable code that gets deployed to
+the user's account. There are no restrictions in terms of what dependencies can
+be used, and no checks are made by the platform in terms of versions, security
+issues and any other bugs that the dependencies might suffer from.
+
+Javascript is known for the wide spectrum of open source, general purpose
+libraries that allow developers to save considerable coding efforts for
+day-to-day tasks such as managing different timezones, elaborate processing of
+collections, making API calls, handling async promises, etc. Luckily, as the
+language evolved through time certain functionalities have been adopted by the
+language itself (such as the `async`/`await` constructs) which makes these
+dependencies unnecessary in most cases, which in turn causes them to be
+unmaintained and eventually deprecated. Unless there's a good reason not to,
+components should avoid using such dependencies and instead opt for the
+equivalent native language functionalities.
+
+Another consequence of the wide offering of open source libraries is the fact
+that there's usually several libraries that offer the same functionalities. In
+such cases, it is almost always preferable to pick the library that is the most
+popular, recently maintained and with the highest community and/or enterprise
+support.
+
+Some examples of popular but deprecated/unnecessary libraries:
+
+- [`moment`](https://momentjs.com/docs/#/-project-status/) (it's no longer
+  maintained)
+- [`async`](https://www.npmjs.com/package/async) (Javascript already supports a
+  much cleaner approach with `async`/`await`)
+- [`node-fetch`](https://www.npmjs.com/package/node-fetch) (we prefer to use
+  [`axios`](https://www.npmjs.com/package/axios))
+- [`underscore`](https://www.npmjs.com/package/underscore) (we prefer to use
+  [`lodash`](https://www.npmjs.com/package/lodash))
+
 #### Documentation and Comments
+
+As described in the [Documentation](#documentation) section, the Pipedream code
+leverages [JSDoc](https://jsdoc.app/) to annotate different parts of the code in
+order to both generate documentation automatically, while also having the
+documentation right next to the code that it describes.
+
+When reviewing code, make sure that the any new and/or modified code is properly
+documented using the JSDoc syntax as described above. In particular, the
+following constructs must **always** be documented:
+
+- Public methods (i.e. methods in a component that are meant to be used by other
+  components)
+- Exported constants and functions
+
+The code snippet below attempts to provide a comprehensive example of a
+well-documented module:
+
+```js
+const cloudStorage = require("../../cloud_storage.app");
+
+/**
+ * A configuration object containing request retry options
+ *
+ * @typedef {Object} ExponentialBackoffRetryParams
+ * @property {number} retries - The maximum amount of retries to execute
+ * @property {number} factor - The exponential back-off factor
+ * @property {number} minTimeout - The number of milliseconds before starting
+ * the first retry
+ */
+
+/**
+ * The default retry parameters for this components (i.e. components that
+ * process files)
+ *
+ * @constant
+ * @type {ExponentialBackoffRetryParams}
+ */
+const RETRY_OPTS = {
+  retries: 5,
+  factor: 2,
+  minTimeout: 2000,
+};
+
+module.exports = {
+  key: "cloud_storage-new-file",
+  name: "New File",
+  description: "Emit new events when a file is created",
+  version: "0.0.1",
+  dedupe: "unique",
+  props: {
+    cloudStorage,
+    db: "$.service.db",
+    drive: {
+      type: "string",
+      label: "Drive ID",
+      description: "The drive to watch for new files",
+      async options({ nextPage: page }) {
+        const {
+          drives,
+          nextPage,
+        } = this._getDrives(page);
+        const options = drives.map((drive) => ({
+          label: drive.name,
+          value: drive.id,
+        }));
+        return {
+          options,
+          context: {
+            nextPage,
+          },
+        };
+      },
+    },
+  },
+  hooks: {
+    activate() {
+      this._setLastTimestamp();
+    },
+  },
+  methods: {
+    _getLastTimestamp() {
+      return this.db.get("lastTimestamp");
+    },
+    /**
+     * Persist the timestamp from which to start scanning for new records
+     *
+     * @param {number} [lastTimestamp=Date.now()] - The timestamp to persist, as
+     * a UNIX epoch in milliseconds. Defaults to the timestamp at the moment of
+     * the method call.
+     */
+    _setLastTimestamp(lastTimestamp = Date.now()) {
+      this.db.set("lastTimestamp", lastTimestamp);
+    },
+    _getDrives(page) {
+      const {
+        drives: allDrives,
+        nextPage,
+      } = this.cloudStorage.getDrives({
+        nextPage: page,
+      });
+
+      // This component is only concerned about those drives that are active.
+      // Since the app does not provide a way to retrieve active drives only, we
+      // must filter them out on our side.
+      const drives = allDrives.filter(({ active }) => active);
+      return {
+        drives,
+        nextPage,
+      };
+    },
+    _generateMeta(data) {
+      const {
+        id,
+        name,
+        createdAt: ts,
+      } = data;
+      const summary = `New file: ${name}`;
+      return {
+        id,
+        summary,
+        ts,
+      };
+    },
+    /**
+     * An object representing a file in the Cloud Storage app
+     *
+     * @typedef {Object} DriveFile
+     * @property {string} id - The unique ID of the file
+     * @property {string} name - The filename
+     * @property {string} createdAt - The creation date of the file
+     */
+    /**
+     * Scan the drive for new files since the last time the component ran. This
+     * generator yields one new file at at time.
+     *
+     * @param {string} sinceCreatedAt - The cut-off date from which to consider
+     * files as new
+     *
+     * @yields @type {DriveFile} the next new file to process
+     */
+    async *listNewFiles(sinceCreatedAt) {
+      const fileStream = this.cloudStorage.listFiles({
+        query: `metadata.created_at >= ${sinceCreatedAt}`,
+        retryOpts: RETRY_OPTS,
+      });
+      for await (const file of fileStream) {
+        yield {
+          id: file.id,
+          name: file.filename,
+          createdAt: file.metadata.created_at,
+        };
+      }
+    },
+  },
+  async run() {
+    const lastTimestamp = this._getLastTimestamp();
+    const sinceCreatedAt = new Date(lastTimestamp).toISOString();
+    const newFilesStream = this.listNewFiles(sinceCreatedAt);
+    for await (const file of newFilesStream) {
+      const meta = this._generateMeta(file);
+      this.$emit(file, meta);
+
+      // After emitting the event for the new file, we persist its creation date
+      // so that the next execution processes files created after this one
+      const newTimestamp = Date.parse(file.createdAt);
+      this._setLastTimestamp(newTimestamp);
+    }
+  },
+};
+
+// Additional exported properties
+module.exports.RETRY_OPTS = RETRY_OPTS;
+```
+
+##### Comments
+
+The first thing to notice here is that the code contains different types of
+comments, including the aforementioned JSDoc strings. As a rule of thumb,
+comments should be used mostly for clarification purposes, **not** explanation
+purposes. In other words, if the code needs comments to explain its purpose,
+then the code is not clear enough and we should strive for a better
+architecture. Clarification on the other hand is sometimes necessary when
+justifying the choice of certain parameters when calling an API, or when the
+usage of an API cannot be determined without additional information (such as the
+official documentation).
+
+:::danger BAD
+Unnecessary comments that signal an underlying issue in the code
+:::
+
+In this example, the code needs comments because of a poor design in the logic
+itself. The risk here is for the logic to eventually change and the comments
+becoming outdated, which can cause confusion later on.
+
+```js
+function getDate(file) {
+  let createdAtStr;
+  if (!file || !file.created_at) {
+    // If the file does not contain a valid creation date, we return null
+    return null;
+  } else {
+    // Otherwise, we extract the creation date from the object
+    createdAtStr = file.created_at;
+  }
+
+  // After extracting the creation date from the file, we create a new `Date`
+  // object that corresponds to the extracted field
+  return new Date(createdAtStr);
+}
+```
+
+:::tip GOOD
+Comments that provide additional, useful context
+:::
+
+In the next example below however, the code has been refactored to a point where
+it expresses enough clarity for comments to become unnecessary, and the only
+comment made is for next developers to get additional context from an official
+source (in this case, the API docs).
+
+```js
+function getFileCreationDate(file = {}) {
+  const { created_at: createdAt } = file;
+
+  // Files might not contain a creation date timestamp.
+  // See the API docs for more info: https://dev.cloudstorage.com/docs/files
+  return createdAt
+    ? new Date(createdAt)
+    : null;
+}
+```
+
+##### JSDoc Annotations
+
+Another thing to notice in the example is the fact that **public methods** (i.e.
+those that do **not** start with an underscore `_`) **are all annotated with JSDoc
+strings**. This allows developers to get immediate information regarding the
+purpose of a method, as well as its type. Having this information as JSDoc
+strings allows development tools such as IDEs to parse it and provide real-time
+assistance when using these methods in the code.
+
+**Public constructs other than methods in a module must also adhere to this
+documentation**. This includes exported constants and functions, that are
+usually defined in [common](#common-files-optional) modules. This is usually the
+"text book" case when JSDoc becomes relevant.
+
+Also note that some non-public methods are also documented with JSDoc. This is
+not mandatory though, and in some situations it might even be counterproductive,
+since developers might start using non-public methods because they are well
+documented, breaking the desired encapsulation.
