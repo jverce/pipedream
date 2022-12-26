@@ -1,6 +1,9 @@
 # Overview
 
-The Pipeline API (<https://pipelinecrm.com>) allows users to create and manage their sales pipelines, track leads, manage contacts, and streamline their customer updates. With the Pipeline API, you can build a powerful CRM system that can help your business grow and increase productivity.
+The [Pipeline API](https://pipelinecrm.com) allows users to create and manage
+their sales pipelines, track leads, manage contacts, and streamline their
+customer updates. With the Pipeline API, you can build a powerful CRM system
+that can help your business grow and increase productivity.
 
 Here are some examples of what you can build using the Pipeline API:
 

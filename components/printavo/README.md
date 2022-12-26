@@ -1,10 +1,12 @@
 # Overview
 
-What Can You Create With the Printavo API?
+The Printavo API provides a powerful and feature-rich set of tools to integrate
+with any software platform or service. With the API, you can create custom
+integrations that can help automate workflow, track and manage orders, generate
+customer invoices, and much more.
 
-The Printavo API provides a powerful and feature-rich set of tools to integrate with any software platform or service. With the API, you can create custom integrations that can help automate workflow, track and manage orders, generate customer invoices, and much more.
-
-The possibilities for what you can create using the Printavo API are endless, and a few of the potential uses include:
+The possibilities for what you can create using the Printavo API are endless,
+and a few of the potential uses include:
 
 - Automated customer order processing.
 - Creation of custom checkout flows that link directly to Printavo.
@@ -17,4 +19,5 @@ The possibilities for what you can create using the Printavo API are endless, an
 - Back-end integration with existing print services.
 - And even more.
 
-By using the Printavo API, you can create unique and useful integrations to simplify your workflow and better satisfy your customer's needs.
+By using the Printavo API, you can create unique and useful integrations to
+simplify your workflow and better satisfy your customer's needs.

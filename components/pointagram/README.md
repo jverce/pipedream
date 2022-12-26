@@ -1,8 +1,9 @@
 # Overview
 
-What can you create with the Pointagram API?
-
-The Pointagram API is a powerful tool for building location-aware apps that can be used for a variety of purposes. With it, you can create custom maps, location-based services, and more. Here are a few examples of what you can do with the Pointagram API:
+The Pointagram API is a powerful tool for building location-aware apps that can
+be used for a variety of purposes. With it, you can create custom maps,
+location-based services, and more. Here are a few examples of what you can do
+with the Pointagram API:
 
 - Create maps with colored pins and/or labels to track points-of-interest
 - Build an app that can detect nearby locations and send notifications

@@ -1,6 +1,10 @@
 # Overview
 
- Procore's API enables developers to build powerful applications for industries with complex workflows, such as construction. With the Procore API, you can extend and customize Procore's existing features, integrate with external platforms and applications, and create innovative solutions for your organization.
+ Procore's API enables developers to build powerful applications for industries
+ with complex workflows, such as construction. With the Procore API, you can
+ extend and customize Procore's existing features, integrate with external
+ platforms and applications, and create innovative solutions for your
+ organization.
 
 Here are some examples of what you can build with the Procore API:
 

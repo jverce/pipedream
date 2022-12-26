@@ -1,8 +1,14 @@
 # Overview
 
-Using Planyo Online Booking API, you can create custom booking systems for any type of business or service. The API provides all the tools you need to build a powerful, modern booking system tailored to your specific needs.
+Using Planyo Online Booking API, you can create custom booking systems for any
+type of business or service. The API provides all the tools you need to build a
+powerful, modern booking system tailored to your specific needs.
 
-Planyo's API tools make it easy for developers to implement a wide variety of features. You can quickly add booking forms and interfaces, as well as offer advanced payment and customer management tools. You can also create custom dynamic reservations or cart-based checkout experiences which are reliable and secure.
+Planyo's API tools make it easy for developers to implement a wide variety of
+features. You can quickly add booking forms and interfaces, as well as offer
+advanced payment and customer management tools. You can also create custom
+dynamic reservations or cart-based checkout experiences which are reliable and
+secure.
 
 Here are some examples of what you can do with Planyo's API:
 
